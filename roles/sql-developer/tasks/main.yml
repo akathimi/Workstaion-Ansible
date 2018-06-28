@@ -1,0 +1,50 @@
+---
+- name: ensure required APT packages are installed
+  apt:
+    autoremove: yes
+    cache_valid_time: 3600
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  become: yes
+  with_items:
+    - unzip
+
+- name: check if Oracle SQL Developer archive is present
+  stat:
+    path: "{{ ferrarimarco_oracle_sql_dev_archive_path }}"
+  register: sqldeveloper_archive
+
+- name: fail if Oracle SQL Developer archive is not present
+  fail:
+    msg: "Cannot find Oracle SQL Developer archive in {{ ferrarimarco_oracle_sql_dev_archive_path }}"
+  when: sqldeveloper_archive.stat.exists == False
+
+- name: create install directory
+  file:
+    dest: "{{ ferrarimarco_oracle_sql_dev_install_dir }}"
+    state: directory
+
+- name: set executable path
+  set_fact:
+    ferrarimarco_oracle_sql_dev_exe_path: "{{ ferrarimarco_oracle_sql_dev_install_dir ~ '/sqldeveloper/sqldeveloper.sh' }}"
+    ferrarimarco_oracle_sql_dev_icon_path: "{{ ferrarimarco_oracle_sql_dev_install_dir ~ '/sqldeveloper/icon.png' }}"
+
+- name: check if Oracle SQL Developer is already installed
+  stat:
+    path: "{{ ferrarimarco_oracle_sql_dev_exe_path }}"
+  register: sqldeveloper_executable
+
+- name: unpack archive from master
+  unarchive:
+    creates: "{{ ferrarimarco_oracle_sql_dev_exe_path }}"
+    dest: "{{ ferrarimarco_oracle_sql_dev_install_dir }}"
+    src: "{{ ferrarimarco_oracle_sql_dev_archive_path }}"
+
+- name: initialize menu shortcut
+  template:
+    dest: /usr/share/applications/sqldeveloper.desktop
+    group: root
+    mode: 0644
+    owner: root
+    src: sqldeveloper.desktop.j2
