@@ -1,0 +1,5 @@
+---
+- hosts: all
+  roles:
+    - role: ferrarimarco.oracle-sql-developer
+      ferrarimarco_oracle_sql_dev_archive_path: "{{ ansible_env.PWD ~ '/roles/ferrarimarco.oracle-sql-developer/test/sqldeveloper-no-jre.zip' }}"

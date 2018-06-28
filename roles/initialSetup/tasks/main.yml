@@ -1,10 +1,16 @@
 ---
 
-- name: Ensure i386 arch support
+- name: enable 32bit arch support
   lineinfile: dest=/var/lib/dpkg/arch line="i386" create=yes
   sudo: yes
 
-- name: install some packages
+- name: create downloads directory
+  file:
+    path: "{{ downloads_directory}}"
+    state: directory
+    mode: 0777
+
+- name: download and install essential packages and pre-requisites
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
   with_items:
     - apt-transport-https
@@ -18,7 +24,7 @@
     - tar
 
 
-- name: add docker private_key
+- name: add private_keys for repos
   apt_key: url="{{ item }}"
   with_items:
     - https://dl-ssl.google.com/linux/linux_signing_key.pub
@@ -31,54 +37,25 @@
     - ppa:webupd8team/atom
     - deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
     - ppa:notepadqq-team/notepadqq
-    - deb http://archive.canonical.com/ bionic partner
     - deb http://dl.google.com/linux/chrome/deb/ stable main
     - ppa:videolan/stable-daily
 
+- name: Download packages files
+  get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+  with_dict: "{{ packages }}"
 
 
-- name: Download zoom needed files
-  get_url:
-    url: https://zoom.us/client/latest/zoom_amd64.deb
-    dest: "/home/vagrant/Downloads/zoom_amd64.deb"
-    mode: 0777
-
-- name: Download beyondcompare needed files
-  get_url:
-    url: https://www.scootersoftware.com/bcompare-4.2.5.23088_amd64.deb
-    dest: "/home/vagrant/Downloads/bcompare-4.2.5.23088_amd64.deb"
-    mode: 0777
-
-- name: Download teamviewer needed files
-  get_url:
-    url: https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
-    dest: "/home/vagrant/Downloads/teamviewer_amd64.deb"
-    mode: 0777
-
-- name: Download intellij needed files
-  get_url:
-    url: https://download.jetbrains.com/idea/ideaIC-2018.1.5.tar.gz
-    dest: "/home/vagrant/Downloads/ideaIC-2018.1.5.tar.gz"
-    mode: 0777
+- name: install packages
+  apt: deb="{{ item.value.path }}"
+  when: " item.value.type  == 'deb'"
+  with_dict: "{{ packages }}"
 
 - name: unarchive intellij
-  unarchive: dest=/opt src="/home/vagrant/Downloads/ideaIC-2018.1.5.tar.gz" creates=/opt/intellij remote_src=yes
-
-
-- name: install zoom
-  apt: deb="/home/vagrant/Downloads/zoom_amd64.deb"
-
-- name: install beyondcompare
-  apt: deb="/home/vagrant/Downloads/bcompare-4.2.5.23088_amd64.deb"
-
-- name: install zoom
-  apt: deb="/home/vagrant/Downloads/teamviewer_amd64.deb"
-
+  unarchive: dest=/opt src="{{ downloads_directory }}/ideaIC-2018.1.5.tar.gz" creates=/opt/intellij remote_src=yes
 
 - name: install some packages
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
   with_items:
-    - telnet
     - atom
     - google-chrome-stable
     - vagrant

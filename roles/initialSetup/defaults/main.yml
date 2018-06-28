@@ -1,2 +1,20 @@
 ---
-# defaults file for initialSetup
+downloads_directory: /tmp
+
+packages:
+  zoom:
+    path: "{{ downloads_directory }}/zoom.deb"
+    url: https://zoom.us/client/latest/zoom_amd64.deb
+    type: deb
+  beyondcompare:
+    path: "{{ downloads_directory }}/beyondcompare.deb"
+    url: https://www.scootersoftware.com/bcompare-4.2.5.23088_amd64.deb
+    type: deb
+  teamviewer:
+    path: "{{ downloads_directory }}/teamviewer.deb"
+    url: https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+    type: deb
+  intellij:
+    path: "{{ downloads_directory }}/intellij.tar.gz"
+    url: https://download.jetbrains.com/idea/ideaIC-2018.1.5.tar.gz
+    type: archive

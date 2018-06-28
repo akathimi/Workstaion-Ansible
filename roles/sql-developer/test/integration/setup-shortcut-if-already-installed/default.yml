@@ -1,0 +1,32 @@
+---
+- hosts: all
+  pre_tasks:
+    - name: set executable placeholder directory path
+      set_fact:
+        ferrarimarco_oracle_sql_dev_exe_placeholder_dir: /opt/oracle/sqldeveloper
+
+    - name: create the directory for placeholder of the executable
+      file:
+        path: "{{ ferrarimarco_oracle_sql_dev_exe_placeholder_dir }}"
+        state: directory
+
+    - name: set executable placeholder path
+      set_fact:
+        ferrarimarco_oracle_sql_dev_exe_placeholder_path: "{{ ferrarimarco_oracle_sql_dev_exe_placeholder_dir ~ '/sqldeveloper.sh' }}"
+
+    - name: check if the placeholder of the executable has already been created
+      stat:
+        path: "{{ ferrarimarco_oracle_sql_dev_exe_placeholder_path }}"
+      register: sqldeveloper_executable_placeholder
+
+    - name: create a placeholder of the executable
+      file:
+        group: root
+        mode: 0755
+        owner: root
+        path: "{{ ferrarimarco_oracle_sql_dev_exe_placeholder_path }}"
+        state: touch
+      when: sqldeveloper_executable_placeholder.stat.exists == False
+  roles:
+    - role: ferrarimarco.oracle-sql-developer
+      ferrarimarco_oracle_sql_dev_archive_path: "{{ ansible_env.PWD ~ '/roles/ferrarimarco.oracle-sql-developer/test/sqldeveloper-no-jre.zip' }}"
