@@ -1,6 +1,0 @@
----
-# Oracle SQL Developer archive path on the Ansible controller node
-ferrarimarco_oracle_sql_dev_archive_path:
-
-# Destination path
-ferrarimarco_oracle_sql_dev_install_dir: "/opt/oracle"
