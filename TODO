@@ -3,15 +3,3 @@
 3- burp
 5- intellij install
 7- sql developer
-
-
-
-
-config.vm.provision :shell, :inline => <<'EOF'
-sudo apt update
-sudo apt upgrade
-sudo apt install software-properties-common
-sudo apt-add-repository ppa:ansible/ansible
-sudo apt update
-sudo apt install -y  ansible
-EOF

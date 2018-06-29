@@ -5,38 +5,23 @@
 - name: create downloads directory
   file: path="{{ downloads_directory}}" state=directory mode=0644
 
-- name: apt update
-  apt: update_cache=yes autoclean=yes autoremove=y cache_valid_time=0
-
-- name: download and install essential packages and pre-requisites
-  apt: name={{ item }} state=present  cache_valid_time=86400
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
-    - curl
-    - build-essential
-    - python-pip
-    - python-virtualenv
-    - net-tools
-    - tar
-    - openjdk-8-jdk
+- name: download and install essential/basic packages and pre-requisites
+  apt: name={{ item }} state=present autoclean=yes autoremove=y cache_valid_time=86400
+  with_items: "{{ basic }}"
 
 - name: add keys for repos
-  apt_key: url="{{ item }}"
-  with_items:
-    - https://dl-ssl.google.com/linux/linux_signing_key.pub
-    - https://download.docker.com/linux/ubuntu/gpg
+  apt_key: url="{{ item.value.repo_key}}"
+  when: item.value.repo_key is defined
+  with_dict: "{{ mains }}"
 
 - name: setup repositries
-  apt_repository: repo={{ item }} state=present
-  with_items:
-    - ppa:notepadqq-team/notepadqq
-    - ppa:dreibh/ppa
-    - ppa:webupd8team/atom
-    - deb http://dl.google.com/linux/chrome/deb/ stable main
-    - deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+  apt_repository: repo={{ item.value.repo }} state=present
+  when: item.value.repo is defined
+  with_dict: "{{ mains }}"
 
+- name: downloading and installing packages
+  apt: name={{ item.key }} state=present cache_valid_time=86400
+  with_dict: "{{ mains }}"
 
 - name: Download packages files
   get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
@@ -50,27 +35,6 @@
   get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
   with_dict: "{{ archives }}"
 
-- name: unarchiving
+- name: unarchiving packages
   unarchive: src="{{ downloads_directory }}/{{ item.key }}.tar.gz" dest=/opt/ remote_src=yes mode=0755
   with_dict: "{{ archives }}"
-
-- name: running installers silently
-  shell: "{{ item }}"
-  with_items:
-    - sh /opt/jprofiler*/bin/jprofiler
-    - sh 
-
-- name: install some packages
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
-  with_items:
-    - atom
-    - google-chrome-stable
-    - vagrant
-    - docker-ce
-    - virtualbox
-    - filezilla
-    - notepadqq
-    - vlc
-    - xpad
-    - wireshark
-    - putty

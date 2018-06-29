@@ -1,6 +1,17 @@
 ---
 downloads_directory: /home/vagrant/Downloads/ansibletmp
 
+basic:
+  - ca-certificates
+  - software-properties-common
+  - curl
+  - build-essential
+  - python-pip
+  - python-virtualenv
+  - net-tools
+  - tar
+  - openjdk-8-jdk
+
 packages:
   zoom:
     path: "{{ downloads_directory }}/zoom.deb"
@@ -22,3 +33,23 @@ archives:
   jprofiler:
     path: "{{ downloads_directory }}/jprofiler.tar.gz"
     url: https://download-keycdn.ej-technologies.com/jprofiler/jprofiler_linux_10_1_2.tar.gz
+
+mains:
+  atom:
+    repo: ppa:webupd8team/atom
+  google-chrome-stable:
+    repo: deb http://dl.google.com/linux/chrome/deb/ stable main
+    repo_key: https://dl-ssl.google.com/linux/linux_signing_key.pub
+  vagrant:
+  docker-ce:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+    repo_key: https://download.docker.com/linux/ubuntu/gpg
+  virtualbox:
+  filezilla:
+  notepadqq:
+    repo: ppa:notepadqq-team/notepadqq
+  vlc:
+  xpad:
+  wireshark:
+    repo: ppa:dreibh/ppa
+  putty:
