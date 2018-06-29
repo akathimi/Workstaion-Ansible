@@ -1,16 +1,17 @@
-1- setup connection
-2- setup machine for ansible
-3- basic packages
-4- complex packages
 
-
-
-
-
-
-
-1- wireshark
 2- jprofiler
 3- burp
-4- draw.io
 5- intellij install
+7- sql developer
+
+
+
+
+config.vm.provision :shell, :inline => <<'EOF'
+sudo apt update
+sudo apt upgrade
+sudo apt install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+sudo apt install -y  ansible
+EOF

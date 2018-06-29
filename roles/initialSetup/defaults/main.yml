@@ -1,20 +1,24 @@
 ---
-downloads_directory: /tmp
+downloads_directory: /home/vagrant/Downloads/ansibletmp
 
 packages:
   zoom:
     path: "{{ downloads_directory }}/zoom.deb"
     url: https://zoom.us/client/latest/zoom_amd64.deb
-    type: deb
   beyondcompare:
     path: "{{ downloads_directory }}/beyondcompare.deb"
     url: https://www.scootersoftware.com/bcompare-4.2.5.23088_amd64.deb
-    type: deb
   teamviewer:
     path: "{{ downloads_directory }}/teamviewer.deb"
     url: https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
-    type: deb
+  drawio:
+    path: "{{ downloads_directory }}/draw.io-amd64-8.8.0.deb"
+    url: https://github.com/jgraph/drawio-desktop/releases/download/v8.8.0/draw.io-amd64-8.8.0.deb
+
+archives:
   intellij:
     path: "{{ downloads_directory }}/intellij.tar.gz"
     url: https://download.jetbrains.com/idea/ideaIC-2018.1.5.tar.gz
-    type: archive
+  jprofiler:
+    path: "{{ downloads_directory }}/jprofiler.tar.gz"
+    url: https://download-keycdn.ej-technologies.com/jprofiler/jprofiler_linux_10_1_2.tar.gz
