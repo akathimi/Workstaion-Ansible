@@ -1,17 +1,15 @@
 ---
-
 - name: enable 32bit arch support
-  lineinfile: dest=/var/lib/dpkg/arch line="i386" create=yes
-  sudo: yes
+  lineinfile: dest=/var/lib/dpkg/arch line="i386"
 
 - name: create downloads directory
-  file:
-    path: "{{ downloads_directory}}"
-    state: directory
-    mode: 0777
+  file: path="{{ downloads_directory}}" state=directory mode=0644
+
+- name: apt update
+  apt: update_cache=yes autoclean=yes autoremove=y cache_valid_time=0
 
 - name: download and install essential packages and pre-requisites
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
+  apt: name={{ item }} state=present  cache_valid_time=86400
   with_items:
     - apt-transport-https
     - ca-certificates
@@ -22,36 +20,45 @@
     - python-virtualenv
     - net-tools
     - tar
+    - openjdk-8-jdk
 
-
-- name: add private_keys for repos
+- name: add keys for repos
   apt_key: url="{{ item }}"
   with_items:
     - https://dl-ssl.google.com/linux/linux_signing_key.pub
     - https://download.docker.com/linux/ubuntu/gpg
 
-
 - name: setup repositries
   apt_repository: repo={{ item }} state=present
   with_items:
-    - ppa:webupd8team/atom
-    - deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
     - ppa:notepadqq-team/notepadqq
+    - ppa:dreibh/ppa
+    - ppa:webupd8team/atom
     - deb http://dl.google.com/linux/chrome/deb/ stable main
-    - ppa:videolan/stable-daily
+    - deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+
 
 - name: Download packages files
   get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
   with_dict: "{{ packages }}"
 
-
 - name: install packages
   apt: deb="{{ item.value.path }}"
-  when: " item.value.type  == 'deb'"
   with_dict: "{{ packages }}"
 
-- name: unarchive intellij
-  unarchive: dest=/opt src="{{ downloads_directory }}/ideaIC-2018.1.5.tar.gz" creates=/opt/intellij remote_src=yes
+- name: Download archived packages files
+  get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+  with_dict: "{{ archives }}"
+
+- name: unarchiving
+  unarchive: src="{{ downloads_directory }}/{{ item.key }}.tar.gz" dest=/opt/ remote_src=yes mode=0755
+  with_dict: "{{ archives }}"
+
+- name: running installers silently
+  shell: "{{ item }}"
+  with_items:
+    - sh /opt/jprofiler*/bin/jprofiler
+    - sh 
 
 - name: install some packages
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
@@ -63,6 +70,7 @@
     - virtualbox
     - filezilla
     - notepadqq
-    - openjdk-8-jdk
     - vlc
     - xpad
+    - wireshark
+    - putty
