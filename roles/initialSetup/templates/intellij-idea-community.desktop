@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=IntelliJ IDEA Community Edition
+Comment=Intelligent Java IDE
+Exec={{ intellij_directory }}/bin/idea.sh
+Icon={{ intellij_directory }}/bin/idea.png
+Terminal=false
+Type=Application
+Categories=Development;IDE;Java;
+StartupWMClass=jetbrains-idea
