@@ -1,0 +1,11 @@
+---
+- name: Download archived packages files
+  get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+  with_dict: "{{ archives }}"
+
+- name: unarchiving packages
+  unarchive: src="{{ downloads_directory }}/{{ item.key }}.tar.gz" dest=/opt/ remote_src=yes mode=0755
+  with_dict: "{{ archives }}"
+  register: unarhiving
+
+- debug: var={{unarhiving}}
