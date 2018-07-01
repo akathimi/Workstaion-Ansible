@@ -1,0 +1,8 @@
+[Desktop Entry]
+Exec=/opt/VSCode-linux-x64/code
+Terminal=false
+StartupNotify=true
+Categories=Development;Editor;
+Type=Application
+Icon=/opt/VSCode-linux-x64/resources/app/resources/linux/code.png
+Name=Visual Studio Code

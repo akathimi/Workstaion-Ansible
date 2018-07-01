@@ -1,0 +1,44 @@
+---
+- name: Download archived packages files
+  get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+  with_dict: "{{ archives }}"
+
+- name: unarchiving packages
+  unarchive: src="{{ downloads_directory }}/{{ item.key }}.tar.gz" dest=/opt/ remote_src=yes mode=0755
+  with_dict: "{{ archives }}"
+
+- name: register intellij directory
+  find:
+    paths: /opt/
+    patterns: 'idea*'
+    file_type: directory
+  register: find
+
+- set_fact: intellij_directory={{ item.path }}
+  with_items: "{{ find.files }}"
+
+- name: creating itellij Icon
+  template: src=intellij-idea-community.desktop dest=/usr/share/applications/intellij-idea-community.desktop mode=0644 owner=root group=root
+
+- name: register jprofiler directory
+  find:
+    paths: /opt/
+    patterns: 'jprofiler*'
+    file_type: directory
+  register: find
+
+- set_fact: jprofiler_directory={{ item.path }}
+  with_items: "{{ find.files }}"
+
+- name: register jprofiler icon
+  find: paths={{ jprofiler_directory }}/.install4j patterns='*.ico' recurse=yes
+  register: find_icon
+
+- set_fact: jprofiler_icon={{ item.path }}
+  with_items: "{{ find_icon.files }}"
+
+- name: creating jprofiler Icon
+  template: src=jprofiler.desktop dest=/usr/share/applications/jprofiler.desktop mode=0644 owner=root group=root
+
+- name: creating VScode Icon
+  template: src=visual_studio_code.desktop dest=/usr/share/applications/visual_studio_code.desktop mode=0644 owner=root group=root

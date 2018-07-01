@@ -1,3 +1,2 @@
 [new]
-#127.0.0.1:2222 ansible_ssh_user=vagrant ansible_ssh_key=/home/akram/Ansible_Induction/workstation/.vagrant/machines/ubuntu18/virtualbox/private_key
 127.0.0.1:2222 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
