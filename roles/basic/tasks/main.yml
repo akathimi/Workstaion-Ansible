@@ -1,12 +1,6 @@
 ---
-- name: enable 32bit arch support
-  lineinfile: dest=/var/lib/dpkg/arch line="i386"
-
-- name: create downloads directory
-  file: path="{{ downloads_directory}}" state=directory mode=0644
-
 - name: download and install essential/basic packages and pre-requisites
-  apt: name={{ item }} state=present autoclean=yes autoremove=y cache_valid_time=86400
+  apt: name={{ item }} state=present
   with_items: "{{ basic }}"
 
 - name: add keys for repos
@@ -20,7 +14,7 @@
   with_dict: "{{ mains }}"
 
 - name: downloading and installing packages
-  apt: name={{ item.key }} state=present cache_valid_time=86400
+  apt: name={{ item.key }} state=present
   with_dict: "{{ mains }}"
 
 - name: Download packages files

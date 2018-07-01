@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: enable 32bit arch support
+      lineinfile: dest=/var/lib/dpkg/arch line="i386"
+      become: false
+
+    - name: create downloads directory
+      file: path="{{ downloads_directory}}" state=directory mode=0666
+
+    - name: update apt cache
+      apt: update_cache=yes autoclean=yes autoremove=y cache_valid_time=86400
+
+- import_playbook: basic.yml
+- import_playbook: custom.yml
+- import_playbook: sqldeveloper.yml
