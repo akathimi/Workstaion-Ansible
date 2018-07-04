@@ -1,0 +1,11 @@
+---
+archives:
+  intellij:
+    path: "{{ downloads_directory }}/intellij.tar.gz"
+    url: https://download.jetbrains.com/idea/ideaIC-2018.1.5.tar.gz
+  jprofiler:
+    path: "{{ downloads_directory }}/jprofiler.tar.gz"
+    url: https://download-keycdn.ej-technologies.com/jprofiler/jprofiler_linux_10_1_2.tar.gz
+  visual_studio_code:
+    path: "{{ downloads_directory }}/visual_studio_code.tar.gz"
+    url: https://go.microsoft.com/fwlink/?LinkID=620884

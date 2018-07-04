@@ -1,0 +1,34 @@
+---
+- name: download and install essential/basic packages and pre-requisites
+  apt: name={{ item }} state=present
+  with_items: "{{ basic }}"
+
+- name: add keys for repos
+  apt_key: url="{{ item.value.repo_key}}"
+  when: item.value.repo_key is defined
+  with_dict: "{{ mains }}"
+
+- name: setup repositries
+  apt_repository: repo={{ item.value.repo }} state=present
+  when: item.value.repo is defined
+  with_dict: "{{ mains }}"
+
+- name: downloading and installing main packages
+  apt: name={{ item.key }} state=present
+  with_dict: "{{ mains }}"
+
+- name: Download packages files
+  block:
+  - name: Download .deb packages
+    get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+    with_dict: "{{ packages }}"
+  rescue:
+  - name: Deleting corrupt downloaed files
+    file: path="{{ item.value.path }}" state=absent
+    with_dict: "{{ packages }}"
+
+  - fail: msg="The download operation has failed, check your urls and try again"
+
+- name: install .deb packages
+  apt: deb="{{ item.value.path }}"
+  with_dict: "{{ packages }}"
