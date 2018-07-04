@@ -7,9 +7,9 @@
       lineinfile: dest=/var/lib/dpkg/arch line="i386"
       become: false
 
-    - name: create downloads directory
+    - name: create downloads temporary directory
       file: path="{{ downloads_directory}}" state=directory mode=0666
-
+      
     - name: update apt cache
       apt: update_cache=yes autoclean=yes autoremove=y cache_valid_time=86400
 

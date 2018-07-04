@@ -13,14 +13,22 @@
   when: item.value.repo is defined
   with_dict: "{{ mains }}"
 
-- name: downloading and installing packages
+- name: downloading and installing main packages
   apt: name={{ item.key }} state=present
   with_dict: "{{ mains }}"
 
 - name: Download packages files
-  get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
-  with_dict: "{{ packages }}"
+  block:
+  - name: Download .deb packages
+    get_url: url="{{ item.value.url }}" dest="{{ item.value.path }}" mode=0644
+    with_dict: "{{ packages }}"
+  rescue:
+  - name: Deleting corrupt downloaed files
+    file: path="{{ item.value.path }}" state=absent
+    with_dict: "{{ packages }}"
 
-- name: install packages
+  - fail: msg="The download operation has failed, check your urls and try again"
+
+- name: install .deb packages
   apt: deb="{{ item.value.path }}"
   with_dict: "{{ packages }}"

@@ -1,6 +1,11 @@
 ---
-- name: unarchiving sqldeveloper
-  unarchive: src=sqldeveloper-18.1.0.095.1630-no-jre.zip dest=/opt/ mode=0755
+- name: begin sqldeveloper
+  block:
+    - name: unarchiving sqldeveloper
+      unarchive: src=sqldeveloper-18.1.0.095.1630-no-jre.zip dest=/opt/ mode=0755
+  rescue:
+    - fail: msg="sqldeveloper archive not found, make sure to place in the files directory and try again"
+
 
 - name: configuring sqldeveloper
   lineinfile: dest=/home/vagrant/.sqldeveloper/{{ sqldeveloper_version }}/product.conf line="SetJavaHome /usr/lib/jvm/java-8-openjdk-amd64" create=yes mode=0777
